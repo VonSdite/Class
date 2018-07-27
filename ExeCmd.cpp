@@ -28,14 +28,20 @@ std::wstring ExeCmd(std::wstring pszCmd)
 
     // 读取命令行返回值
     std::wstring strRet;
-    TCHAR buff[1024] = {0};
+    std::string strRetTmp;
+    char buff[1024] = {0};
     DWORD dwRead = 0;
-    strRet = buff;
+    strRetTmp = buff;
     while (ReadFile(hRead, buff, 1024, &dwRead, NULL))
     {
-        strRet += buff;
+        strRetTmp += buff;
     }
     CloseHandle(hRead);
+
+    int nLen = (int)strRetTmp.length();    
+    strRet.resize(nLen, L' ');
+
+    MultiByteToWideChar(CP_ACP,0,(LPCSTR)strRetTmp.c_str(),nLen,(LPWSTR)strRet.c_str(),nLen);
 
     return strRet;
 }
