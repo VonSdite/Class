@@ -1,4 +1,4 @@
-std::wstring ExeCmd(std::wstring pszCmd)
+std::wstring Connection::ExeCmd(std::wstring pszCmd)
 {
     // 创建匿名管道
     SECURITY_ATTRIBUTES sa = {sizeof(SECURITY_ATTRIBUTES), NULL, TRUE};
@@ -27,7 +27,6 @@ std::wstring ExeCmd(std::wstring pszCmd)
     CloseHandle(hWrite);
 
     // 读取命令行返回值
-    std::wstring strRet;
     std::string strRetTmp;
     char buff[1024] = {0};
     DWORD dwRead = 0;
@@ -38,10 +37,19 @@ std::wstring ExeCmd(std::wstring pszCmd)
     }
     CloseHandle(hRead);
 
-    int nLen = (int)strRetTmp.length();    
-    strRet.resize(nLen, L' ');
+    LPCSTR pszSrc = strRetTmp.c_str();
+    int nLen = MultiByteToWideChar(CP_ACP, 0, buff, -1, NULL, 0);
+    if (nLen == 0) 
+        return std::wstring(L"");
 
-    MultiByteToWideChar(CP_ACP,0,(LPCSTR)strRetTmp.c_str(),nLen,(LPWSTR)strRet.c_str(),nLen);
+    wchar_t* pwszDst = new wchar_t[nLen];
+    if (!pwszDst) 
+        return std::wstring(L"");
+
+    MultiByteToWideChar(CP_ACP, 0, pszSrc, -1, pwszDst, nLen);
+    std::wstring strRet(pwszDst);
+    delete[] pwszDst;
+    pwszDst = NULL;
 
     return strRet;
 }
