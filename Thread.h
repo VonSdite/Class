@@ -38,6 +38,11 @@ public:
         if (nTimeOutMs != -1 && nTimeOutMs >= 0)
             WaitForSingleObject(hThread, nTimeOutMs);
     }
+
+    ~Thread()
+    {
+        CloseHandle(hThread);
+    }
     
 };  
 
