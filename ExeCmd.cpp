@@ -37,19 +37,17 @@ std::wstring Connection::ExeCmd(std::wstring pszCmd)
     }
     CloseHandle(hRead);
 
-    LPCSTR pszSrc = strRetTmp.c_str();
-    int nLen = MultiByteToWideChar(CP_ACP, 0, buff, -1, NULL, 0);
-    if (nLen == 0) 
-        return std::wstring(L"");
-
-    wchar_t* pwszDst = new wchar_t[nLen];
-    if (!pwszDst) 
-        return std::wstring(L"");
-
-    MultiByteToWideChar(CP_ACP, 0, pszSrc, -1, pwszDst, nLen);
-    std::wstring strRet(pwszDst);
-    delete[] pwszDst;
-    pwszDst = NULL;
+    size_t i;
+    std::string curLocale = setlocale(LC_ALL, NULL);
+    setlocale(LC_ALL, "chs");
+    const char* _source = strRetTmp.c_str();
+    size_t _dsize = strRetTmp.size() + 1;
+    wchar_t* _dest = new wchar_t[_dsize];
+    wmemset(_dest, 0x0, _dsize);
+    mbstowcs_s(&i, _dest, _dsize, _source, _dsize);
+    std::wstring strRet = _dest;
+    delete[] _dest;
+    setlocale(LC_ALL, curLocale.c_str());
 
     return strRet;
 }
