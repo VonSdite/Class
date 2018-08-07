@@ -6,7 +6,7 @@ MFC提供了一个叫做`CThreadPool` 的类，这是一个模板类，基于完
 
 主要的伪代码如下
 **线程池要操作的任务通过实现CTaskBase的DoTask函数来完成**
-```
+```C++
 #include "CWorker.h" 	// 包含头文件
 #define THREADPOOL_SIZE 5
 
